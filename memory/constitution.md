@@ -37,6 +37,61 @@ The mandatory sequence for every feature:
 - **State**: Local component state first; use services for shared state only when the spec requires it
 - **HTTP**: Angular `HttpClient` with typed interfaces
 
+## Project Structure (NON-NEGOTIABLE)
+
+All source code lives under `src/app/` and is organised into exactly three folders:
+
+```
+src/app/
+├── models/       — interfaces and enums only, no logic
+├── services/     — all HTTP and business logic, no UI
+└── components/   — standalone Angular components, no direct HTTP calls
+```
+
+No additional top-level folders may be created without a constitution amendment.
+
+## Domain Constants
+
+### Priority
+Valid values: `LOW | MEDIUM | HIGH`
+Default when omitted: `MEDIUM`
+
+## API Contract
+
+Base path: `api/todo` (proxied in development via `proxy.conf.json`)
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `api/todo` | Fetch all todos |
+| POST | `api/todo` | Create todo |
+| PUT | `api/todo/{id}` | Update todo |
+| PATCH | `api/todo/{id}/toggle` | Toggle completed status |
+| DELETE | `api/todo/{id}` | Delete todo |
+
+### TodoRequest shape (POST / PUT)
+```json
+{ "title": "", "description": "", "priority": "MEDIUM", "dueDate": "YYYY-MM-DD" }
+```
+
+### TodoResponse shape (all GET responses)
+```json
+{ "id": 0, "title": "", "description": "", "completed": false, "priority": "MEDIUM",
+  "dueDate": "YYYY-MM-DD", "createdAt": "", "updatedAt": "" }
+```
+
+## Validation Rules (NON-NEGOTIABLE)
+
+These apply to every feature that creates or edits a todo:
+
+- **Title**: required, maximum 255 characters
+- **Priority**: optional — MUST default to `MEDIUM` when omitted
+- **Due Date**: required, MUST NOT be a past date
+
+## UI Behaviour Rules
+
+- The home view MUST group todos by **due date** (ascending) and within each date by **status** (incomplete first, complete last)
+- Filtering supports: status (`all / active / completed`) and priority (`all / LOW / MEDIUM / HIGH`)
+
 ## Quality Gates
 
 - All specs pass the specification quality checklist before planning
@@ -49,4 +104,4 @@ The mandatory sequence for every feature:
 
 This constitution supersedes all other practices. Amendments require updating this file with rationale and date. All feature branches must be spec-compliant before merge.
 
-**Version**: 1.0.0 | **Ratified**: 2026-05-14 | **Last Amended**: 2026-05-14
+**Version**: 1.1.0 | **Ratified**: 2026-05-14 | **Last Amended**: 2026-05-14
