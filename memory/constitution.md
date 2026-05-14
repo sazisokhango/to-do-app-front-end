@@ -19,13 +19,20 @@ Start simple. No premature abstraction. Three similar lines are better than a pr
 
 ### VI. SDD Workflow Order
 The mandatory sequence for every feature:
-1. `/speckit.specify` — write the spec
-2. Review and approve spec
-3. `/speckit.plan` — create implementation plan
-4. Review and approve plan
-5. `/speckit.tasks` — generate task list
-6. `/speckit.implement` — implement tasks
-7. `/speckit.checklist` — verify completion
+1. Create a feature branch: `git checkout -b {NNN}-{feature-name}`
+2. `/speckit.specify` — write the spec
+3. Review and approve spec
+4. `/speckit.plan` — create implementation plan
+5. Review and approve plan
+6. `/speckit.tasks` — generate task list
+7. `/speckit.implement` — implement tasks
+8. `/speckit.checklist` — verify completion
+9. Open a Pull Request — `main` is never committed to directly
+
+### VII. Branch-First (NON-NEGOTIABLE)
+A feature branch MUST be created before any spec, plan, or code is written. No commits may be made directly to `main`. Branch names follow the pattern `{NNN}-{feature-name}` matching the spec folder (e.g. `001-todo-home`). `main` receives code only via merged Pull Requests.
+
+---
 
 ## Angular Constraints
 
@@ -104,4 +111,4 @@ These apply to every feature that creates or edits a todo:
 
 This constitution supersedes all other practices. Amendments require updating this file with rationale and date. All feature branches must be spec-compliant before merge.
 
-**Version**: 1.1.0 | **Ratified**: 2026-05-14 | **Last Amended**: 2026-05-14
+**Version**: 1.2.0 | **Ratified**: 2026-05-14 | **Last Amended**: 2026-05-14
