@@ -28,4 +28,12 @@ export class TodoService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getDeleted(): Observable<TodoResponse[]> {
+    return this.http.get<TodoResponse[]>(`${this.apiUrl}/deleted`);
+  }
+
+  restore(id: number): Observable<TodoResponse> {
+    return this.http.patch<TodoResponse>(`${this.apiUrl}/${id}/restore`, {});
+  }
 }
