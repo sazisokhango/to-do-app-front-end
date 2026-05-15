@@ -5,6 +5,7 @@ import { TodoRequest } from '../../models/todo-request.model';
 import { Priority } from '../../models/priority.enum';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
 import { TodoFormComponent } from '../todo-form/todo-form.component';
+import { TrashItemComponent } from '../trash-item/trash-item.component';
 
 interface DateGroup {
   date: string;
@@ -16,14 +17,17 @@ const PRIORITY_ORDER: Record<Priority, number> = { HIGH: 0, MEDIUM: 1, LOW: 2 };
 
 @Component({
   selector: 'app-home',
-  imports: [TodoItemComponent, TodoFormComponent],
+  imports: [TodoItemComponent, TodoFormComponent, TrashItemComponent],
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
   private readonly todoService = inject(TodoService);
 
   readonly todos = signal<TodoResponse[]>([]);
+  readonly deletedTodos = signal<TodoResponse[]>([]);
   readonly showForm = signal(false);
+  readonly showTrash = signal(false);
+  readonly trashLoaded = signal(false);
   readonly editingTodo = signal<TodoResponse | null>(null);
   readonly error = signal<string | null>(null);
   readonly statusFilter = signal<'all' | 'active' | 'completed'>('all');
@@ -112,10 +116,40 @@ export class HomeComponent implements OnInit {
   }
 
   onDelete(id: number): void {
-    if (!window.confirm('Delete this todo?')) return;
+    const item = this.todos().find(t => t.id === id);
     this.todoService.delete(id).subscribe({
-      next: () => this.todos.update(list => list.filter(t => t.id !== id)),
+      next: () => {
+        this.todos.update(list => list.filter(t => t.id !== id));
+        if (item) this.deletedTodos.update(list => [...list, { ...item, deletedAt: new Date().toISOString() }]);
+      },
       error: () => this.error.set('Failed to delete todo.')
+    });
+  }
+
+  openTrash(): void {
+    this.showTrash.set(true);
+    if (!this.trashLoaded()) {
+      this.todoService.getDeleted().subscribe({
+        next: deleted => {
+          this.deletedTodos.set(deleted);
+          this.trashLoaded.set(true);
+        },
+        error: () => this.error.set('Failed to load trash.')
+      });
+    }
+  }
+
+  closeTrash(): void {
+    this.showTrash.set(false);
+  }
+
+  onRestore(id: number): void {
+    this.todoService.restore(id).subscribe({
+      next: restored => {
+        this.deletedTodos.update(list => list.filter(t => t.id !== id));
+        this.todos.update(list => [...list, restored]);
+      },
+      error: () => this.error.set('Failed to restore todo.')
     });
   }
 

@@ -9,4 +9,5 @@ export interface TodoResponse {
   dueDate: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt: string | null;
 }
