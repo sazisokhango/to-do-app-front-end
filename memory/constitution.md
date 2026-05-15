@@ -69,11 +69,13 @@ Base path: `api/todo` (proxied in development via `proxy.conf.json`)
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
-| GET | `api/todo` | Fetch all todos |
+| GET | `api/todo` | Fetch all active todos |
 | POST | `api/todo` | Create todo |
 | PUT | `api/todo/{id}` | Update todo |
 | PATCH | `api/todo/{id}/toggle` | Toggle completed status |
-| DELETE | `api/todo/{id}` | Delete todo |
+| DELETE | `api/todo/{id}` | Soft-delete todo (moves to trash, not permanent) |
+| GET | `api/todo/deleted` | Fetch all soft-deleted todos |
+| PATCH | `api/todo/{id}/restore` | Restore a soft-deleted todo to active list |
 
 ### TodoRequest shape (POST / PUT)
 ```json
@@ -83,8 +85,9 @@ Base path: `api/todo` (proxied in development via `proxy.conf.json`)
 ### TodoResponse shape (all GET responses)
 ```json
 { "id": 0, "title": "", "description": "", "completed": false, "priority": "MEDIUM",
-  "dueDate": "YYYY-MM-DD", "createdAt": "", "updatedAt": "" }
+  "dueDate": "YYYY-MM-DD", "createdAt": "", "updatedAt": "", "deletedAt": null }
 ```
+`deletedAt` is `null` for active todos and an ISO 8601 datetime string for soft-deleted todos.
 
 ## Validation Rules (NON-NEGOTIABLE)
 
@@ -111,4 +114,4 @@ These apply to every feature that creates or edits a todo:
 
 This constitution supersedes all other practices. Amendments require updating this file with rationale and date. All feature branches must be spec-compliant before merge.
 
-**Version**: 1.2.0 | **Ratified**: 2026-05-14 | **Last Amended**: 2026-05-14
+**Version**: 1.3.0 | **Ratified**: 2026-05-14 | **Last Amended**: 2026-05-15

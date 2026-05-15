@@ -15,7 +15,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain — **3 markers present (backend API contract)**
+- [x] No [NEEDS CLARIFICATION] markers remain — all 3 resolved by backend team (2026-05-15)
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic
@@ -33,6 +33,10 @@
 
 ## Notes
 
-- 3 [NEEDS CLARIFICATION] markers remain in the Assumptions section — all relate to the **backend API contract** for soft delete, trash fetch, and restore endpoints.
-- These must be resolved with the backend team before `/speckit.plan` can run.
-- All other checklist items pass.
+- All NEEDS CLARIFICATION markers resolved (2026-05-15) by backend team:
+  - Soft delete: `DELETE api/todo/{id}` (existing, now soft-deletes)
+  - Fetch deleted: `GET api/todo/deleted` (new)
+  - Restore: `PATCH api/todo/{id}/restore` (new)
+- `TodoResponse` now includes `deletedAt` field (`null` = active, datetime = deleted)
+- US4 (permanent delete) and US5 (empty trash) deferred — no backend endpoint yet
+- Spec is ready for `/speckit.plan`

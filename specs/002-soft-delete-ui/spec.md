@@ -118,7 +118,8 @@ A user wants to permanently remove all deleted todos in one action.
 
 ### Key Entities
 
-- **Deleted Todo**: A todo that has been soft-deleted — has the same shape as `TodoResponse` but is excluded from the main list.
+- **Deleted Todo**: A todo that has been soft-deleted — same shape as `TodoResponse` but with `deletedAt` set to a datetime string instead of `null`. Excluded from the main active list.
+- **deletedAt**: A new field on `TodoResponse`. `null` = active todo. ISO 8601 datetime string = soft-deleted todo, indicating when it was deleted.
 
 ---
 
@@ -136,9 +137,9 @@ A user wants to permanently remove all deleted todos in one action.
 
 ## Assumptions
 
-- The backend supports a soft delete mechanism — the existing `DELETE api/todo/{id}` endpoint will be updated or a new endpoint provided (e.g. `PATCH api/todo/{id}/delete` or `DELETE` with a `soft=true` flag). The exact endpoint is a [NEEDS CLARIFICATION: what is the backend soft-delete API contract?].
-- The backend provides an endpoint to fetch soft-deleted todos (e.g. `GET api/todo/trash`). This is a [NEEDS CLARIFICATION: what is the backend trash fetch API endpoint?].
-- The backend provides a restore endpoint (e.g. `PATCH api/todo/{id}/restore`). This is a [NEEDS CLARIFICATION: what is the backend restore API endpoint?].
-- Empty trash maps to a bulk delete endpoint (e.g. `DELETE api/todo/trash`).
+- **Soft delete**: `DELETE api/todo/{id}` — existing endpoint, now soft-deletes instead of hard-deletes. No frontend change to the HTTP call, only to the UX (no confirm dialog).
+- **Fetch deleted todos**: `GET api/todo/deleted` — new endpoint, returns all soft-deleted todos.
+- **Restore**: `PATCH api/todo/{id}/restore` — new endpoint, moves a todo back to the active list.
+- **Permanent delete / empty trash**: no backend endpoint confirmed — US4 (permanent delete) and US5 (empty trash) are deferred until the backend provides these endpoints.
 - The trash view is a separate section on the same page (toggle/tab), not a separate route.
 - Authentication is out of scope — all users share the same trash.
